@@ -18,13 +18,13 @@
     isLoggingIn.value = true
 
     try {
-      const {data} = await repository.login(credentials)
+      const { data } = await repository.login(credentials);
     if (data) {
-      localStorage.setItem('access_token', data.access_token)
-      localStorage.setItem('user', data.user)
-      router.replace({name: 'about'})
+      localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      router.replace({ name: "about" });
     }
-    } catch (e) {
+  } catch (e) {
       console.error (e);
     }
 
