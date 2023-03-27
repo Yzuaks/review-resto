@@ -27,8 +27,9 @@ const excerpt = (text, maxLenght = 10, indicator = "...") => {
 };
 </script>
 <template>
+  <div class="bg-gray-200/50">
   <BaseContainer>
-    <div class="grid grid-cols-12 gap-4 py-4">
+    <div class="grid mt-32 grid-cols-12 gap-4 py-4">
       <div v-for="resto in restos" :key="resto.id" class="col-span-4">
         <!-- Card -->
         <BaseCard :to="{ name: 'restos-show', params: { id: resto.id } }">
@@ -40,4 +41,5 @@ const excerpt = (text, maxLenght = 10, indicator = "...") => {
       </div>
     </div>
   </BaseContainer>
+</div>
 </template>
