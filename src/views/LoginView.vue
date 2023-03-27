@@ -1,4 +1,5 @@
 <script setup>
+import axios from 'axios';
   import { reactive, ref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useAuthRepository } from '@/composables';
@@ -12,25 +13,30 @@
     password: '',
     device_name: 'browser',
   });
-
+  
   const isLoggingIn = ref(false)
   const onSubmit = async () => {
-    isLoggingIn.value = true
-
-    try {
-      const { data } = await repository.login(credentials);
-    if (data) {
-      localStorage.setItem("access_token", data.access_token);
-      localStorage.setItem("user", JSON.stringify(data.user));
-      router.replace({ name: "restos" });
-    }
-  } catch (e) {
-      console.error (e);
-    }
-
-    isLoggingIn.value = false
-
-  };
+    isLoggingIn.value = true;
+    axios.defaults.withCredentials = true;
+    axios.defaults.baseURL = "http://localhost:8000";
+    await axios.get('/sanctum/csrf-cookie').then( async response =>  {
+        // console.log(response)
+       try {
+         const {data}  = await repository.login(credentials);
+         if (data) {
+           // kalo ada data langsung di store di localStorage
+           // iki kyke parameter pertama e setItem iku key ne, parameter kedua iku value ne
+           localStorage.setItem('access_token', data.access_token);
+           localStorage.setItem('user', JSON.stringify(data.user));
+           router.replace({name: 'restos'})
+         } 
+       } 
+       catch (e) {
+           console.error(e)
+       }
+      });
+    isLoggingIn.value = false;
+  }
 
 </script>
 
@@ -48,12 +54,10 @@
     </section>
 
 
-    <section class="col-span-5 bg-gray-50 h-full shadow-2xl">
-     
-
-      <div class="flex flex-col items-center  h-full px-20">
+    <section class="col-span-5 bg-black/5 h-full shadow-2xl">
+      <div class="flex flex-col items-center h-full px-20">
     
-        <P class="text-center mb-28 mt-24 font-[Poppins] text-green-800 font-bold text-[50px]"><span class="text-green-700">FORM LOGIN</span>  <br> BOYO CASUAL STORE</P>
+        <P class="text-center mb-16 mt-56 font-[Poppins] text-green-800 font-bold text-[50px]"><span class="text-green-700">FORM LOGIN</span>  <br> BOYO CASUAL STORE</P>
   
         <form method="post" :action="route.path" 
         class="relative w-full" 
@@ -74,8 +78,12 @@
             class="border border-gray-300 p-3 w-full bg-gray-50 outline-none rounded focus:ring-2 focus:ring-blue-300">
           </div>
   
-          <div class="mt-6 text-[19px]">
+          <div class="mt- mb-3 text-[19px]">
             <button type="submit" class="bg-blue-600 text-white font-[Poppins] p-3 w-full hover:bg-blue-700 rounded transition-colors divide-fuchsia-200">LOGIN</button>
+          </div>
+
+          <div>
+          <p class="font-[Poppins]">Don't Have Account?<a href="/register" class="text-red-600 font-[Poppins] pl-2">Register</a></p>
           </div>
 
         </form>
